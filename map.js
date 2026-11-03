@@ -130,7 +130,7 @@ function initMap() {
     });
 
     const shadedRelief = L.tileLayer('https://tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM, NASA',
+        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM, NASA &mdash; Tiles &copy; OpenTopoMap (CC-BY-SA)',
         maxZoom: 17,
         minZoom: 3
     });
