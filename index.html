@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="西行记：玄奘从长安西行求法，十七年后携梵夹东归。史实据《大唐西域记》《大慈恩寺三藏法师传》，朱批辨史实与演义，对照《西游记》。互鉴层以阿拉伯语列七座城的后来地名，以孟加拉语读东印度四国。英文说书另备。">
+    <meta name="keywords" content="西行记,玄奘,大唐西域记,西游记,文明互鉴,Xuanzang,Great Tang Records,lajaward">
+    <meta name="author" content="西行记二次创作（底板 MIT xuanzang-journey）">
+    <title>西行记 · 玄奘求法</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;700&family=Noto+Serif+Bengali:wght@500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="timeline.css">
+    <link rel="stylesheet" href="avatar.css">
+    <link rel="stylesheet" href="guji.css?v=20261104">
+</head>
+<body>
+    <div id="juanShou" class="juan-shou" role="dialog" aria-labelledby="juanTitle">
+        <div class="juan-shou-ye">
+            <p class="js-track" id="juanTrack">数媒国际专项赛 · 数字赋能·文明互鉴 · 西行求法，与沿途对读</p>
+            <h1 id="juanTitle">西行记</h1>
+            <p class="juan-en-title" id="juanEnTitle" lang="en">A Record of the Western Journey</p>
+            <p class="js-fu" id="juanFu">玄奘求法 · 贞观三年至十九年</p>
+            <p class="juan-en-line" id="juanEnLine" lang="en">He walked west to study, then carried the scriptures home. The Chinese chronicle, later Arabic names, and Bengali readings of eastern India stay side by side.</p>
+            <div class="js-lian">
+                <span id="juanLian1">西出长安十万里</span>
+                <span id="juanLian2">东归贝叶五千言</span>
+            </div>
+            <div class="js-block">
+                <h2 id="juanAudienceTitle">适用对象</h2>
+                <p id="juanAudience">博物馆观众 · 中学课堂 · 阿拉伯语读者 · 孟加拉语读者</p>
+            </div>
+            <div class="js-block">
+                <h2 id="juanSceneTitle">应用场景</h2>
+                <p id="juanScene">展厅一体机导览 · 课堂大屏说书 · 文化宫主题日 · 家中网页按站听</p>
+            </div>
+            <div class="js-block">
+                <h2 id="juanHowTitle">怎么看</h2>
+                <ol>
+                    <li id="juanHow1">点地图站点，听这一站的本事。古地名在前，今地名对照今日中国：长安即今西安。</li>
+                    <li id="juanHow2">看朱批：红笔是《大唐西域记》《慈恩传》的史实，墨批对照小说《西游记》。</li>
+                    <li id="juanHow3">点「开讲西行」，沿十七载、二十九站走一遍。</li>
+                    <li id="juanHow4">点「互鉴」：阿拉伯读法看七座城的后来名字，孟加拉读法补上主线没画的东印度四国。</li>
+                </ol>
+            </div>
+            <button type="button" id="ruJuanBtn">入卷</button>
+            <p class="js-oss" id="juanOss">地图引擎二次创作自开源项目 NguyenTruongAnLab/xuanzang-journey（MIT）。地名、说书、卷面，以及史实与演义的对照，均为创作组原创；站点史实仍依《大唐西域记》《大慈恩寺三藏法师传》。</p>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-dark desktop-navbar bian-e">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1" id="desktopNavTitle">西行记 · 玄奘求法</span>
+            <div class="d-flex gap-2 align-items-center flex-wrap justify-content-end">
+                <button type="button" class="btn btn-outline-light btn-sm" id="playBtn">开讲西行</button>
+                <button type="button" class="btn btn-outline-light btn-sm" id="muluBtn" data-bs-toggle="modal" data-bs-target="#muluModal">目录</button>
+                <button type="button" class="btn btn-outline-light btn-sm" id="hujianNavBtn" data-bs-toggle="modal" data-bs-target="#hujianModal">互鉴</button>
+                <button type="button" class="btn btn-outline-light btn-sm" id="aboutNavBtn" data-bs-toggle="modal" data-bs-target="#aboutModal">说书</button>
+                <button type="button" class="btn btn-outline-light btn-sm" id="yinpuBtn">朱批 0/8</button>
+                <div class="btn-group" id="langGroup" role="group" aria-label="语言">
+                    <button type="button" class="btn btn-outline-light btn-sm" id="langZh" onclick="setLanguage('zh')">中</button>
+                    <button type="button" class="btn btn-outline-light btn-sm" id="langEn" onclick="setLanguage('en')">EN</button>
+                    <button type="button" class="btn btn-outline-light btn-sm" id="langVi" onclick="setLanguage('vi')">VI</button>
+                </div>
+                <div class="btn-group d-none d-lg-inline-flex" id="navVoiceGroup" role="group" aria-label="讲解语言">
+                    <button type="button" class="btn btn-outline-light btn-sm" data-voice-mode="zh">中文</button>
+                    <button type="button" class="btn btn-outline-light btn-sm" data-voice-mode="en">EN</button>
+                    <button type="button" class="btn btn-outline-light btn-sm" data-voice-mode="bi">双语</button>
+                </div>
+                <button type="button" class="btn btn-outline-light btn-sm" id="navListenBtn">听此站</button>
+                <button type="button" class="btn btn-outline-light btn-sm" id="navFoldBtn" onclick="toggleDesktopSidePanel()" title="收卷">卷</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Compact Navbar -->
+    <nav class="mobile-compact-navbar mobile-only">
+        <div class="navbar-left">
+            <span class="navbar-title">西行记</span>
+        </div>
+        <div class="navbar-right">
+            <button class="icon-btn" id="mobileHujianBtn" data-bs-toggle="modal" data-bs-target="#hujianModal" aria-label="互鉴" title="互鉴">鉴</button>
+            <button class="icon-btn" id="mobileLangBtn" aria-label="语言" title="语言">中</button>
+            <button class="icon-btn" id="mobileAboutBtn" data-bs-toggle="modal" data-bs-target="#aboutModal" aria-label="说书" title="说书">说</button>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-0">
+        <div id="map"></div>
+        <div id="offlineBanner" class="offline-banner" hidden>底图需联网加载；站点、说书与语音可离线使用。</div>
+        <div id="narrationStage" class="narration-stage" hidden>
+            <div class="narration-photos">
+                <span class="narration-seal" id="narrationSeal">插图</span>
+                <img id="narrationPhoto" alt="">
+            </div>
+            <div class="narration-caption" id="narrationCaption">
+                <p class="cap-meta" id="capMeta"></p>
+                <p class="cap-text" id="capText"></p>
+                <p class="cap-text cap-other" id="capOther" hidden></p>
+            </div>
+        </div>
+        
+        <!-- Desktop: Smart Side Panel (hidden on mobile) -->
+        <div id="desktopSidePanel" class="desktop-side-panel desktop-only juan-ce" role="region" aria-label="本站说书">
+            <button class="side-panel-close ce-fold" onclick="toggleDesktopSidePanel()" aria-label="收卷">收卷</button>
+            <div class="side-panel-content ce-ye">
+                <div class="ce-seal" id="desktopSeal">西行</div>
+                <div class="side-panel-header">
+                    <p class="ce-phase" id="desktopPhase">出关 · 河西</p>
+                    <h5 class="side-panel-title" id="desktopLocationTitle">长安</h5>
+                    <p class="side-panel-subtitle" id="desktopLocationSubtitle">今西安 · 中国 · 贞观三年（公元 629 年）</p>
+                    <p class="ce-duizhao" id="desktopDuizhao">古称长安，即今日西安。</p>
+                    <p class="ce-en" id="desktopEnLine">Chang'an, today's Xi'an.</p>
+                    <div class="voice-row">
+                        <div class="voice-mode" id="panelVoiceGroup" role="group" aria-label="讲解语言">
+                            <button type="button" data-voice-mode="zh">中文</button>
+                            <button type="button" data-voice-mode="en">EN</button>
+                            <button type="button" data-voice-mode="bi" class="active">双语</button>
+                        </div>
+                        <button type="button" class="ce-listen" id="listenBtn">听此站</button>
+                        <button type="button" class="ce-listen" id="bianzhenCue" hidden>朱批辨真</button>
+                    </div>
+                </div>
+                <div class="ce-zhupi" id="desktopZhupi">
+                    <p class="shi">史实：违禁私行，并非太宗钦差。</p>
+                    <p class="yi">演义：《西游记》写成御弟赐紫、奉旨取经。</p>
+                </div>
+                <div id="hujianBox" hidden></div>
+                <p class="ce-quote" id="desktopQuote">「宁可就西而死，不归东而生。」</p>
+                <div class="side-panel-gallery" id="desktopGallery"></div>
+                <div class="side-panel-section">
+                    <h6 class="section-title">本事</h6>
+                    <p class="section-text" id="desktopDescription">点地图上的一站，听这一站的故事。</p>
+                    <p class="section-text ce-en" id="desktopOtherText" lang="en" hidden></p>
+                </div>
+                <div class="side-panel-section" id="desktopBuddhistSection">
+                    <h6 class="section-title">法缘</h6>
+                    <p class="section-text" id="desktopBuddhistContext"></p>
+                </div>
+                <div class="side-panel-section" id="desktopXuanzangSection">
+                    <h6 class="section-title">亲历</h6>
+                    <p class="section-text" id="desktopXuanzangExperience"></p>
+                </div>
+                <div class="side-panel-section" id="desktopHistoricalSection">
+                    <h6 class="section-title">当时</h6>
+                    <p class="section-text" id="desktopHistoricalContext"></p>
+                </div>
+                <p class="ce-source">据《大唐西域记》《大慈恩寺三藏法师传》。朱批为说书对照，不替代原书。</p>
+                <p class="ce-source" lang="en">Based on the Great Tang Records and the Biography of the Tripitaka Master. The red notes compare the novel. They do not replace the books.</p>
+                <p class="ce-scene">适用：博物馆导览 · 课堂说书 · 文化宫讲座</p>
+            </div>
+        </div>
+        <button type="button" class="zhan-juan-tab" id="zhanJuanTab" aria-label="展卷">展卷</button>
+        
+        <!-- Mobile: Smart Bottom Panel -->
+        <div id="mobileBottomPanel" class="mobile-bottom-panel mobile-only" role="region" aria-label="Journey information">
+            <div class="mobile-content-wrapper">
+                <!-- Vertical Timeline (Left side) -->
+                <div class="mobile-vertical-timeline" id="mobileVerticalTimeline">
+                    <!-- Timeline items will be generated here -->
+                </div>
+                
+                <!-- Main Content (Right side) -->
+                <div class="mobile-main-content">
+                    <!-- Image Gallery (Full-width swipeable carousel) -->
+                    <div class="mobile-image-gallery" id="mobileImageGallery">
+                        <div class="gallery-carousel" id="galleryCarousel">
+                            <!-- Swipeable images will be loaded here -->
+                        </div>
+                        <div class="gallery-overlay" id="galleryOverlay">
+                            <div class="overlay-text">
+                                <div class="overlay-city" id="overlayCity">长安</div>
+                                <div class="overlay-location" id="overlayLocation">今西安 · 中国 · 贞观三年</div>
+                            </div>
+                        </div>
+                        <div class="gallery-pagination" id="galleryPagination">
+                            <!-- Pagination dots will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Description Panel (Scrollable details) -->
+                    <div class="mobile-description-panel" id="mobileDescriptionPanel">
+                        <div id="mobileStationDetails">
+                            <!-- Full details will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Desktop: Enhanced Visual Timeline (Hidden - replaced by mini timeline in side panel) -->
+        <div id="enhancedTimelineContainer" class="enhanced-timeline-container desktop-only" style="display: none;"></div>
+        
+        <!-- Desktop: Full-width Bottom Timeline (hidden on mobile/tablet) -->
+        <div id="desktopTimelineContainer" class="desktop-timeline-container desktop-only"></div>
+        
+        <div class="timeline-controls" style="display: none;">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center">
+                            <span class="me-2 text-white">贞观三年</span>
+                            <input type="range" class="form-range flex-grow-1" id="timelineSlider" min="0" max="100" value="0">
+                            <span class="ms-2 text-white">贞观十九年</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <span id="currentYear" class="badge bg-light text-dark w-100 p-2">公元 629 年</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="infoPanel" class="info-panel" style="display:none;">
+            <!-- Deprecated - keeping for backward compatibility but hidden -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" id="locationTitle">Select a location</h5>
+                    <p class="card-text" id="locationInfo">Click on any marker to see details about that stop</p>
+                    <div id="locationImages"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade mulu-modal" id="muluModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">西行目录 · 二十九站</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="muluBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade mulu-modal" id="hujianModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">互鉴</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="hujianBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="aboutModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">说书 · 西行记</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>贞观三年，长安（今西安）僧人玄奘违禁西行，十七年、五万余里、一百三十八国，求法东归，留下《大唐西域记》。这张交互地图逐站讲本事；小说《西游记》取材于此，不能倒过来当成历史。</p>
+                    <p><strong>适用对象：</strong>博物馆观众、中学历史课堂、文化宫讲座、家庭亲子。</p>
+                    <p><strong>应用场景：</strong>展厅一体机导览、课堂大屏说书、文化宫主题日、家中网页按站听。</p>
+                    <p><strong>纲目：</strong></p>
+                    <ul>
+                        <li>历时十七年（629–645）</li>
+                        <li>古地名与今地名对照：长安即今西安，凉州即今武威</li>
+                        <li>朱批辨史实与演义，不把小说当成历史</li>
+                        <li>参赛主题为数媒国际专项赛「数字赋能·文明互鉴」：西行是去学，东归是把所学带回</li>
+                    </ul>
+                    <p class="small text-muted mb-0">地图引擎二次创作自开源项目 NguyenTruongAnLab/xuanzang-journey（MIT）。地名、说书、卷面，以及史实与演义的对照，均为创作组原创；站点史实仍依《大唐西域记》《大慈恩寺三藏法师传》。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bianzhenOverlay" class="bz-overlay" hidden>
+        <div class="bz-ye" role="dialog" aria-labelledby="bianzhenBody">
+            <button type="button" class="bz-close" id="bianzhenClose" aria-label="合卷">合</button>
+            <div id="bianzhenBody"></div>
+        </div>
+    </div>
+    <div id="yinpuOverlay" class="bz-overlay" hidden>
+        <div class="bz-ye yinpu-ye" role="dialog">
+            <button type="button" class="bz-close" id="yinpuClose" aria-label="合卷">合</button>
+            <p class="bz-kicker" id="yinpuKicker">数字印章</p>
+            <h3 id="yinpuTitle">西行印谱</h3>
+            <p id="yinpuSummary"></p>
+            <p class="yin-path-label" id="yinpuZhuLabel">辨真朱印 · 五枚</p>
+            <div id="yinpuGridZhu" class="yin-path"></div>
+            <p class="yin-path-label" id="yinpuMoLabel">抉择墨印 · 三枚</p>
+            <div id="yinpuGridMo" class="yin-path"></div>
+            <p id="yinpuSealLine" class="yinpu-seal-line"></p>
+        </div>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div id="imageLightbox" class="image-lightbox" style="display: none;">
+        <div class="lightbox-overlay" id="lightboxOverlay"></div>
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+            <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+            <img id="lightboxImage" src="" alt="">
+            <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="vendor/leaflet/leaflet.js"></script>
+    
+    <!-- i18n System -->
+    <script src="i18n.js?v=20261104"></script>
+
+    <!-- Custom JS -->
+    <script src="journey-data.js?v=20261104"></script>
+    <script src="journey-data-enhanced.js?v=20261104"></script>
+    <script src="zh-story.js?v=20261104"></script>
+    <script src="en-story.js?v=20261104"></script>
+    <script src="avatar.js"></script>
+    <script src="timeline.js"></script>
+    <script src="map.js"></script>
+    <script src="narration.js"></script>
+    <script src="chrome-guji.js?v=20261104"></script>
+    <script src="bianzhen-data.js?v=20261104"></script>
+    <script src="bianzhen.js?v=20261104"></script>
+    <script src="hujian-data.js?v=20261104"></script>
+    <script src="hujian.js?v=20261104"></script>
+</body>
+</html>
